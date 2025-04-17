@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p style="text-align: right; margin-top: 10px;">
+        <a href="{% url 'admin_login' %}" style="text-decoration: none; font-weight: bold;">Login as Admin</a>
+    </p>
+
+    <h1>Welcome to Car Workshop</h1>
+    <p>We offer top-notch car maintenance services by skilled mechanics. Book your appointment today to experience quality service at affordable prices. Our team ensures your vehicle is treated with care and professionalism. We also maintain a smooth scheduling system to avoid delays and ensure customer satisfaction.</p>
+
+    <h2>Book Your Appointment</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" name="address" id="address" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" id="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="car_license">Car License Number</label>
+            <input type="text" name="car_license" id="car_license" required>
+        </div>
+        <div class="form-group">
+            <label for="car_engine">Car Engine Number</label>
+            <input type="text" name="car_engine" id="car_engine" required>
+        </div>
+        <div class="form-group">
+            <label for="date">Appointment Date</label>
+            <input type="date" name="date" id="date" value="{{ selected_date|date:'Y-m-d' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="mechanic">Select Mechanic</label>
+            <select name="mechanic" id="mechanic" >
+                {% for i in mechanics %}
+                    <option value="{{ i.mechanic_id }}">
+                        {{ i.name }} - {{ i.phone }}
+                    </option>
+                {% empty %}
+                    <option value="">No mechanics available</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Book Appointment</button>
+    </form>
+
+    <script>
+        // Save form data before reload
+        const formFields = ['name', 'address', 'phone', 'car_license', 'car_engine'];
+
+        formFields.forEach(field => {
+            const input = document.getElementById(field);
+            input.value = localStorage.getItem(field) || '';
+            input.addEventListener('input', () => {
+                localStorage.setItem(field, input.value);
+            });
+        });
+
+        // Clear saved data on successful submit
+        document.querySelector('form').addEventListener('submit', () => {
+            formFields.forEach(field => localStorage.removeItem(field));
+        });
+        
+        // picing date and refreshing the page with date in teh url
+        document.getElementById('date').addEventListener('change', function () {
+            const selectedDate = this.value;
+            if (selectedDate) {
+                window.location.href = `?date=${selectedDate}`;
+            }
+        });
+    </script>    
+{% endblock %}

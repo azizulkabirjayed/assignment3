@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Admin Panel - Appointment Management</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Client Name</th>
+        <th>Phone</th>
+        <th>Car License Number</th>
+        <th>Appointment Date</th> 
+        <th>Mechanic Name</th>    
+        <th>Appointment Date</th>
+        <th>Mechanic</th>
+        <th>Actions</th>
+    </tr>
+    {% for appointment in appointments %}
+    <tr>
+        <form method="post">
+            {% csrf_token %}
+            <td>{{ appointment.client_name }}</td>
+            <td>{{ appointment.phone }}</td>
+            <td>{{ appointment.car_license_number }}</td>
+            <td>{{ appointment.appointment_date }}</td> 
+            <td>{{ appointment.mechanic.name }}</td>     
+            <td>
+                <input type="date" name="new_date" value="{{ appointment.appointment_date }}">
+            </td>
+            <td>
+                <select name="new_mechanic">
+                    {% for mechanic in mechanics %}
+                        <option value="{{ mechanic.mechanic_id }}"
+                            {% if mechanic == appointment.mechanic %}selected{% endif %}>
+                            {{ mechanic.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                <button type="submit">Update</button>
+            </td>
+        </form>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
